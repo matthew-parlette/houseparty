@@ -28,3 +28,12 @@ with bot.TodoistProject("personal") as project:
     assert project
     print("Found project: {}".format(project["name"]))
     print("Todoist is working!")
+
+print("Testing Rocket.Chat...")
+with bot.ChatAPI() as api:
+    me = api.get_my_info()
+    assert me
+    print("Successfully logged in as {}".format(me["name"]))
+
+print("Testing message sending...")
+bot.message(message="Test message from houseparty bot framework", rooms=['house-party'])
