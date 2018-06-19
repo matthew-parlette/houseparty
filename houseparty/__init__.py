@@ -32,7 +32,7 @@ class Bot(object):
         api = None
         try:
             api = jira.JIRA(options, basic_auth=(
-                self.secrets.get("jira-username"),
+                self.config.get("jira-username"),
                 self.secrets.get("jira-password")))
         except jira.exceptions.JIRAError:
             pass
