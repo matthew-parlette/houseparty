@@ -54,6 +54,45 @@ class Bot(object):
                     break
             yield project
 
+    def find_task(self, subject, project_name):
+        """
+        Return a task object from todoist, if it exists.
+
+        If it doesn't exist, None is returned.
+        """
+        with self.TodoistAPI() as api:
+            with self.TodoistProject(project_name) as project:
+                existing = None
+                items = todoist.managers.projects.ProjectsManager(api).get_data(project['id'])['items']
+                for item in items:
+                    if subject in item['content']:
+                        existing = api.items.get_by_id(item['id'])
+                        break
+                return existing
+
+    @contextmanager
+    def Task(self, subject, project_name, force=False):
+        """
+        Return a task object from Todoist.
+
+        If the task exists, then that is returned.
+        If the task exists and force is True, then a new task object is returned
+        If the task does not exist, a new task object is returned
+        """
+        with self.TodoistAPI() as api:
+            with self.TodoistProject(project_name) as project:
+                task = None
+                existing = self.find_task(subject, project_name)
+                if existing and not force:
+                    task = existing
+                else:
+                    api.items.add(subject, project["id"])
+                    api.commit()
+                    task = self.find_task(subject, project_name)
+                yield task
+                api.commit()
+
+
     @contextmanager
     def ChatAPI(self):
         api = RocketChatAPI(settings={
