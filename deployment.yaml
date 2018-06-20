@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: tanya
-        image: mattparlette/tanya
+        image: mattparlette/tanya:latest
         volumeMounts:
         - name: tanya-config
           mountPath: /app/config
