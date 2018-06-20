@@ -31,6 +31,9 @@ class Bot(object):
         options = {'server': self.config.get("jira-url")}
         api = None
         try:
+            print("Logging in to JIRA as {} (password is {} characters)...".format(
+                self.config.get("jira-username"),
+                len(self.secrets.get("jira-password"))))
             api = jira.JIRA(options, basic_auth=(
                 self.config.get("jira-username"),
                 self.secrets.get("jira-password")))
