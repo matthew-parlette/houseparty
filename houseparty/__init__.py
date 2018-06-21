@@ -23,8 +23,10 @@ class Bot(object):
         """
         Load configuration and secrets
         """
+        print("Initializing...")
         self.config = Bot.Config(path="{}/config".format(path))
         self.secrets = Bot.Secret(path="{}/secrets".format(path))
+        print("Initialization complete")
 
     @contextmanager
     def JiraAPI(self):
