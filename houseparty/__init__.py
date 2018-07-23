@@ -92,9 +92,9 @@ class Bot(object):
                     task = existing
                 else:
                     api.items.add(subject, project["id"])
-                    api.commit()
                     task = self.find_task(subject, project_name)
                 yield task
+                print("Committing changes to todoist...")
                 api.commit()
 
 
