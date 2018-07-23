@@ -1,3 +1,0 @@
-jira
-todoist-python
-rocket-python
