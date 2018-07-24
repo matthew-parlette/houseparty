@@ -69,6 +69,8 @@ func GetTodoistClient() (*todoist.Client, error) {
 		// Color:       false,
 	}
 	todoistClient := todoist.NewClient(config)
+	var store todoist.Store
+	todoistClient.Store = &store
 	return todoistClient, nil
 }
 
