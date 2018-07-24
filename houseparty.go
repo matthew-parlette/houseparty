@@ -12,7 +12,7 @@ import (
 	"github.com/RocketChat/Rocket.Chat.Go.SDK/models"
 	chat "github.com/RocketChat/Rocket.Chat.Go.SDK/realtime"
 	jira "github.com/andygrunwald/go-jira"
-	"github.com/kobtea/go-todoist/todoist"
+	"github.com/sachaos/todoist/lib"
 )
 
 var (
@@ -63,12 +63,12 @@ func GetJiraClient() (*jira.Client, error) {
 
 func GetTodoistClient() (*todoist.Client, error) {
 	fmt.Println("Initializing todoist...")
-	todoistClient, err := todoist.NewClient(
-		"",
-		Secret("todoist-token"),
-		"*",
-		"",
-		nil)
+	config := todoist.Config{
+		AccessToken: Secret("todoist-token"),
+		DebugMode:   false,
+		Color:       false,
+	}
+	todoistClient, err := todoist.NewClient(config)
 	if err != nil {
 		return nil, err
 	}
