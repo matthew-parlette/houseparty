@@ -63,15 +63,12 @@ func GetJiraClient() (*jira.Client, error) {
 
 func GetTodoistClient() (*todoist.Client, error) {
 	fmt.Println("Initializing todoist...")
-	config := todoist.Config{
+	config := &todoist.Config{
 		AccessToken: Secret("todoist-token"),
 		DebugMode:   false,
-		Color:       false,
+		// Color:       false,
 	}
-	todoistClient, err := todoist.NewClient(config)
-	if err != nil {
-		return nil, err
-	}
+	todoistClient := todoist.NewClient(config)
 	return todoistClient, nil
 }
 
