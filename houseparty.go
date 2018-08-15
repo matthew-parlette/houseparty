@@ -19,8 +19,11 @@ import (
 )
 
 var (
-	ConfigPath  string
-	SecretsPath string
+	ConfigPath    string
+	SecretsPath   string
+	JiraClient    jira.Client
+	TodoistClient todoist.Client
+	ChatClient    chat.Client
 )
 
 func GetEnv(key, defaultValue string) string {
@@ -185,4 +188,24 @@ func StartHealthCheck() error {
 	health.AddReadinessCheck("jira-dns", healthcheck.DNSResolveCheck(jiraUrl.Host, 5000*time.Millisecond))
 	go http.ListenAndServe("0.0.0.0:8086", health)
 	return nil
+}
+
+func init() {
+	ConfigPath = GetEnv("CONFIG_PATH", "config")
+	SecretsPath = GetEnv("SECRETS_PATH", "secrets")
+	JiraClient, err := GetJiraClient()
+	_ = JiraClient
+	if err != nil {
+		log.Fatal(err)
+	}
+	TodoistClient, err := GetTodoistClient()
+	_ = TodoistClient
+	if err != nil {
+		log.Fatal(err)
+	}
+	ChatClient, err := GetRocketChatClient()
+	_ = ChatClient
+	if err != nil {
+		log.Fatal(err)
+	}
 }
