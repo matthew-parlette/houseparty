@@ -13,24 +13,28 @@ func TestGetEnv(t *testing.T) {
 	_ = GetEnv("HOME", "")
 }
 
+func TestInitJiraClient(t *testing.T) {
+	fmt.Printf("JIRA: %+v\n", JiraClient)
+}
+
+func TestInitTodoistClient(t *testing.T) {
+	fmt.Printf("Todoist: %+v\n", TodoistClient)
+}
+
+func TestInitRocketChatClient(t *testing.T) {
+	fmt.Printf("RocketChat: %+v\n", ChatClient)
+}
+
 func TestGetTodoistClient(t *testing.T) {
-	ConfigPath = GetEnv("CONFIG_PATH", "config")
-	SecretsPath = GetEnv("SECRETS_PATH", "secrets")
-	todoistClient, err := GetTodoistClient()
-	if err != nil {
-		t.Errorf("Error: %v", err)
-	}
-	if err := todoistClient.Sync(context.Background()); err != nil {
+	if err := TodoistClient.Sync(context.Background()); err != nil {
 		t.Errorf("Error: %v", err)
 	}
 	// fmt.Println("Listing projects...")
 	// spew.Dump(todoistClient.Store.Projects)
-	fmt.Println("Found", len(todoistClient.Store.Projects), "projects")
+	fmt.Println("Found", len(TodoistClient.Store.Projects), "projects")
 }
 
 func TestStartHealthCheck(t *testing.T) {
-	ConfigPath = GetEnv("CONFIG_PATH", "config")
-	SecretsPath = GetEnv("SECRETS_PATH", "secrets")
 	StartHealthCheck()
 
 	// Test liveness
@@ -55,18 +59,13 @@ func TestStartHealthCheck(t *testing.T) {
 }
 
 func TestChatClient(t *testing.T) {
-	ConfigPath = GetEnv("CONFIG_PATH", "config")
-	SecretsPath = GetEnv("SECRETS_PATH", "secrets")
-	chatClient, err := GetRocketChatClient()
-	if err != nil {
-		t.Errorf("Error: %v", err)
-	}
-	StartChatListener(chatClient)
+	// t.Skip("Skipping chat client functions")
+	StartChatListener()
 	timeout := 30 * time.Second
 	fmt.Println("Waiting for chat messages for", string(timeout), "seconds...")
-	SendChatMessage(chatClient, "house-party", "I'm in test mode, I'll wait for chat messages for 30 seconds...")
+	SendChatMessage("house-party", "I'm in test mode, I'll wait for chat messages for 30 seconds...")
 	time.Sleep(timeout)
 	fmt.Println("Done waiting for chat messages, shutting down...")
-	SendChatMessage(chatClient, "house-party", "Done waiting for chat messages, shutting down...")
+	SendChatMessage("house-party", "Done waiting for chat messages, shutting down...")
 	return
 }

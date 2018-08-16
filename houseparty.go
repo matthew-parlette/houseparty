@@ -21,9 +21,9 @@ import (
 var (
 	ConfigPath    string
 	SecretsPath   string
-	JiraClient    jira.Client
-	TodoistClient todoist.Client
-	ChatClient    chat.Client
+	JiraClient    *jira.Client
+	TodoistClient *todoist.Client
+	ChatClient    *chat.Client
 )
 
 func GetEnv(key, defaultValue string) string {
@@ -54,49 +54,50 @@ func Secret(item string) string {
 	return result
 }
 
-func GetJiraClient() (*jira.Client, error) {
-	fmt.Println("Initializing JIRA...")
+func InitJiraClient() error {
 	tp := jira.BasicAuthTransport{
 		Username: Config("jira-username"),
 		Password: Secret("jira-password"),
 	}
-	jiraClient, err := jira.NewClient(tp.Client(), Config("jira-url"))
+	client, err := jira.NewClient(tp.Client(), Config("jira-url"))
+	JiraClient = client
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return jiraClient, nil
+	return nil
 }
 
-func GetTodoistClient() (*todoist.Client, error) {
-	fmt.Println("Initializing todoist...")
+func InitTodoistClient() error {
 	config := &todoist.Config{
 		AccessToken: Secret("todoist-token"),
 		DebugMode:   false,
 		// Color:       false,
 	}
-	todoistClient := todoist.NewClient(config)
+	client := todoist.NewClient(config)
 	var store todoist.Store
-	todoistClient.Store = &store
-	return todoistClient, nil
+	client.Store = &store
+	TodoistClient = client
+	return nil
 }
 
-func GetRocketChatClient() (*chat.Client, error) {
+func InitRocketChatClient() error {
 	rocketchatUrlString := Config("rocketchat-url")
 	rocketchatUrl, err := url.Parse(rocketchatUrlString)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	chatClient, err := chat.NewClient(rocketchatUrl, false)
+	client, err := chat.NewClient(rocketchatUrl, false)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	_, err = chatClient.Login(&models.UserCredentials{
+	_, err = client.Login(&models.UserCredentials{
 		Email:    Config("rocketchat-email"),
 		Password: Secret("rocketchat-password")})
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return chatClient, nil
+	ChatClient = client
+	return nil
 }
 
 func GetChatChannel(channel string) models.Channel {
@@ -134,7 +135,10 @@ func IsNonBotUser(user string, nonBotUsers []string) bool {
 }
 
 func StartChatListener() error {
-	channel := GetChatChannel(ChatClient, "house-party")
+	// if ChatClient == nil {
+	// 	return errors.New("houseparty.ChatClient is nil")
+	// }
+	channel := GetChatChannel("house-party")
 	messageChannel := make(chan models.Message, 1)
 	if err := ChatClient.SubscribeToMessageStream(&channel, messageChannel); err != nil {
 		return err
@@ -193,19 +197,16 @@ func StartHealthCheck() error {
 func init() {
 	ConfigPath = GetEnv("CONFIG_PATH", "config")
 	SecretsPath = GetEnv("SECRETS_PATH", "secrets")
-	JiraClient, err := GetJiraClient()
-	_ = JiraClient
-	if err != nil {
+	fmt.Println("Initializing JIRA...")
+	if err := InitJiraClient(); err != nil {
 		log.Fatal(err)
 	}
-	TodoistClient, err := GetTodoistClient()
-	_ = TodoistClient
-	if err != nil {
+	fmt.Println("Initializing todoist...")
+	if err := InitTodoistClient(); err != nil {
 		log.Fatal(err)
 	}
-	ChatClient, err := GetRocketChatClient()
-	_ = ChatClient
-	if err != nil {
+	fmt.Println("Initializing rocketchat...")
+	if err := InitRocketChatClient(); err != nil {
 		log.Fatal(err)
 	}
 }
