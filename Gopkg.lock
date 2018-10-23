@@ -17,6 +17,12 @@
   revision = "c29d9a4853613c0e59fb27add843c7b28b14ec69"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/adlio/trello"
+  packages = ["."]
+  revision = "e4cc07c871d0ee17c5579131fc1c786efbb5fe2a"
+
+[[projects]]
   name = "github.com/andygrunwald/go-jira"
   packages = ["."]
   revision = "0298784c4606cdf01e99644da115863c052a737c"
@@ -133,6 +139,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1e4d54e4ddff12b57c14f490bd3bbc415b44a9ca4a57280b5c6fd5efd9bbd8d5"
+  inputs-digest = "e8fd40dcd69ccd743acd56c42a7961fd427e59813384d8e5250e553a785ef3a1"
   solver-name = "gps-cdcl"
   solver-version = 1

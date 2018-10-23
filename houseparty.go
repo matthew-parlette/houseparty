@@ -13,6 +13,7 @@ import (
 
 	"github.com/RocketChat/Rocket.Chat.Go.SDK/models"
 	chat "github.com/RocketChat/Rocket.Chat.Go.SDK/realtime"
+	"github.com/adlio/trello"
 	jira "github.com/andygrunwald/go-jira"
 	"github.com/heptiolabs/healthcheck"
 	"github.com/sachaos/todoist/lib"
@@ -24,6 +25,7 @@ var (
 	JiraClient    *jira.Client
 	TodoistClient *todoist.Client
 	ChatClient    *chat.Client
+	TrelloClient  *trello.Client
 )
 
 func GetEnv(key, defaultValue string) string {
@@ -174,6 +176,13 @@ func StartChatListener() error {
 	return nil
 }
 
+func InitTrelloClient() error {
+	client := trello.NewClient(Secret("trello-key"), Secret("trello-token"))
+	fmt.Println(client)
+	TrelloClient = client
+	return nil
+}
+
 func StartHealthCheck() error {
 	health := healthcheck.NewHandler()
 	// Our app is not happy if we've got more than 100 goroutines running.
@@ -207,6 +216,10 @@ func init() {
 	}
 	fmt.Println("Initializing rocketchat...")
 	if err := InitRocketChatClient(); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Initializing trello...")
+	if err := InitTrelloClient(); err != nil {
 		log.Fatal(err)
 	}
 }

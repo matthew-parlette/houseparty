@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/adlio/trello"
 )
 
 func TestGetEnv(t *testing.T) {
@@ -25,13 +27,32 @@ func TestInitRocketChatClient(t *testing.T) {
 	fmt.Printf("RocketChat: %+v\n", ChatClient)
 }
 
+func TestInitTrelloClient(t *testing.T) {
+	fmt.Printf("TrelloClient: %+v\n", TrelloClient)
+}
+
 func TestGetTodoistClient(t *testing.T) {
 	if err := TodoistClient.Sync(context.Background()); err != nil {
 		t.Errorf("Error: %v", err)
 	}
 	// fmt.Println("Listing projects...")
 	// spew.Dump(todoistClient.Store.Projects)
-	fmt.Println("Found", len(TodoistClient.Store.Projects), "projects")
+	fmt.Println("Found", len(TodoistClient.Store.Projects), "todoist projects")
+}
+
+func TestTrelloClient(t *testing.T) {
+	member, err := TrelloClient.GetMember(Config("trello-username"), trello.Defaults())
+	if err != nil {
+		t.Errorf("Error: %v", err)
+	}
+
+	boards, err := member.GetBoards(trello.Defaults())
+	if err != nil {
+		t.Errorf("Error: %v", err)
+	}
+	// fmt.Println("Listing projects...")
+	// spew.Dump(todoistClient.Store.Projects)
+	fmt.Println("Found", len(boards), "trello boards")
 }
 
 func TestStartHealthCheck(t *testing.T) {
@@ -59,7 +80,7 @@ func TestStartHealthCheck(t *testing.T) {
 }
 
 func TestChatClient(t *testing.T) {
-	// t.Skip("Skipping chat client functions")
+	t.Skip("Skipping chat client functions")
 	StartChatListener()
 	timeout := 30 * time.Second
 	fmt.Println("Waiting for chat messages for", string(timeout), "seconds...")
