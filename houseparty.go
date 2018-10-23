@@ -189,11 +189,11 @@ func StartHealthCheck() error {
 	health.AddLivenessCheck("goroutine-threshold", healthcheck.GoroutineCountCheck(100))
 	// Our app is not ready if we can't resolve our upstream dependencies in DNS.
 	health.AddReadinessCheck("todoist-dns", healthcheck.DNSResolveCheck("www.todoist.com", 5000*time.Millisecond))
-	chatUrl, err := url.Parse(Config("rocketchat-url"))
-	if err != nil {
-		return err
-	}
-	health.AddReadinessCheck("chat-dns", healthcheck.DNSResolveCheck(chatUrl.Host, 5000*time.Millisecond))
+	// chatUrl, err := url.Parse(Config("rocketchat-url"))
+	// if err != nil {
+	// 	return err
+	// }
+	// health.AddReadinessCheck("chat-dns", healthcheck.DNSResolveCheck(chatUrl.Host, 5000*time.Millisecond))
 	jiraUrl, err := url.Parse(Config("jira-url"))
 	if err != nil {
 		return err
