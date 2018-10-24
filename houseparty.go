@@ -104,7 +104,7 @@ func InitRocketChatClient() error {
 
 func GetChatChannel(channel string) models.Channel {
 	channel_id, _ := ChatClient.GetChannelId(channel)
-	return models.Channel{Id: channel_id}
+	return models.Channel{ID: channel_id}
 }
 
 func SendChatMessage(channel string, message string) error {
