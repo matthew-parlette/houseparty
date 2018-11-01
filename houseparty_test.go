@@ -1,7 +1,6 @@
 package houseparty
 
 import (
-	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -31,13 +30,17 @@ func TestInitTrelloClient(t *testing.T) {
 	fmt.Printf("TrelloClient: %+v\n", TrelloClient)
 }
 
-func TestGetTodoistClient(t *testing.T) {
-	if err := TodoistClient.Sync(context.Background()); err != nil {
-		t.Errorf("Error: %v", err)
-	}
+func TestInitWunderlistClient(t *testing.T) {
+	fmt.Println("WunderlistClient:", WunderlistClient)
+}
+
+func TestTodoistClient(t *testing.T) {
+	fmt.Println("Syncing todoist...")
+	SyncTodoist()
 	// fmt.Println("Listing projects...")
 	// spew.Dump(todoistClient.Store.Projects)
 	fmt.Println("Found", len(TodoistClient.Store.Projects), "todoist projects")
+	// fmt.Println("Found", len(TodoistCompleted.Items), "completed todoist items")
 }
 
 func TestTrelloClient(t *testing.T) {
@@ -53,6 +56,13 @@ func TestTrelloClient(t *testing.T) {
 	// fmt.Println("Listing projects...")
 	// spew.Dump(todoistClient.Store.Projects)
 	fmt.Println("Found", len(boards), "trello boards")
+}
+
+func TestWunderlistClient(t *testing.T) {
+	tasks, _ := WunderlistClient.Tasks()
+	completed, _ := WunderlistClient.CompletedTasks(true)
+	fmt.Println("Found", len(tasks), "wunderlist tasks")
+	fmt.Println("Found", len(completed), "completed wunderlist tasks")
 }
 
 func TestStartHealthCheck(t *testing.T) {
