@@ -90,7 +90,7 @@ func TestStartHealthCheck(t *testing.T) {
 }
 
 func TestChatClient(t *testing.T) {
-	t.Skip("Skipping chat client functions")
+	// t.Skip("Skipping chat client functions")
 	StartChatListener()
 	timeout := 30 * time.Second
 	fmt.Println("Waiting for chat messages for", string(timeout), "seconds...")
